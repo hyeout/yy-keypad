@@ -2,194 +2,130 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<title>Soft Pink Calculator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,400&display=swap');
-
+  /* 1. 배경 및 폰트 설정 */
   body {
-    background-color: #f0f2f5;
+    margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    margin: 0;
+    background-color: transparent; /* 노션 배경색에 맞춤 */
+    font-family: 'Segoe UI', sans-serif;
   }
 
-  /* 계산기 본체 디자인 */
-  .calculator-body {
-    background-color: #FFD1DC; /* 연한 핑크색 본체 */
-    padding: 25px;
-    border-radius: 35px;
-    box-shadow: 
-      0px 15px 30px rgba(255, 182, 193, 0.4),
-      inset 0px -5px 15px rgba(255, 105, 180, 0.1);
+  /* 2. 계산기 본체 연출 (연한 핑크/화이트) */
+  .calculator-frame {
+    background-color: #fff9fb; /* 아주 연한 핑크 화이트 */
+    padding: 30px 20px;
+    border-radius: 40px;
+    box-shadow: 0 20px 50px rgba(255, 192, 203, 0.3);
+    border: 1px solid #ffeef2;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  /* 상단 디스플레이 영역 (점 제거됨) */
-  .display-area {
-    width: 280px;
-    height: 70px;
-    background-color: #FFE4E1; /* 본체보다 조금 더 밝은 핑크 */
-    border-radius: 20px;
+  /* 3. 상단 디스플레이 (점 없애고 숫자 나오게!) */
+  #display {
+    width: 260px;
+    height: 60px;
+    background-color: #ffffff;
+    border-radius: 15px;
     margin-bottom: 25px;
-    box-shadow: inset 0px 3px 8px rgba(0,0,0,0.05);
-    /* 내용이 없으므로 깨끗한 빈 공간 */
+    border: none;
+    text-align: right;
+    padding: 0 20px;
+    font-size: 1.8rem;
+    color: #ffb1cc;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
+    outline: none;
+    box-sizing: border-box;
   }
 
-  /* 키패드 그리드 */
+  /* 4. 사용자님이 주신 이미지 배경 처리 */
+  .keypad-container {
+    position: relative;
+    width: 280px;  /* 이미지 비율에 맞춰 조정 */
+    height: 280px;
+    background-image: url('./keypad.png'); /* 반드시 파일명이 일치해야 함 */
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+  }
+
+  /* 5. 이미지 위의 투명 버튼 그리드 */
   .button-grid {
     display: grid;
-    grid-template-columns: repeat(4, 65px);
-    grid-template-rows: repeat(4, 65px);
-    gap: 15px;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(4, 1fr);
+    width: 100%;
+    height: 100%;
   }
 
-  /* 공통 버튼 스타일 */
-  .key {
-    width: 65px;
-    height: 65px;
-    border-radius: 18px;
+  .invisible-btn {
+    background: transparent;
     border: none;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
-    position: relative;
-    transition: all 0.1s ease;
-    font-family: 'Playfair Display', serif;
+    outline: none;
+    /* 클릭 시 아주 살짝만 반응 */
+    -webkit-tap-highlight-color: transparent;
+    transition: background 0.2s;
+    border-radius: 15px;
   }
 
-  .key:active {
-    transform: translateY(3px);
-    box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
-  }
-
-  /* 흰색 버튼 (숫자 키) */
-  .key-white {
-    background: #FFFFFF;
-    box-shadow: 
-      0px 5px 10px rgba(0,0,0,0.05),
-      0px 2px 3px rgba(0,0,0,0.1);
-  }
-
-  /* 핑크색 버튼 (하트 키) */
-  .key-pink {
-    background: #FFB6C1;
-    box-shadow: 
-      0px 5px 10px rgba(255, 105, 180, 0.3),
-      0px 2px 3px rgba(255, 105, 180, 0.2);
-  }
-
-  /* 숫자 스타일 */
-  .num {
-    font-size: 2rem;
-    font-style: italic;
-    color: #A0A0A0; /* 은은한 회색 */
-    line-height: 1;
-  }
-
-  /* 하단 텍스트 스타일 */
-  .sub {
-    font-size: 0.6rem;
-    font-style: italic;
-    color: #C0C0C0;
-    margin-top: 2px;
-  }
-
-  /* 1번 키의 작은 하트들 */
-  .mini-hearts {
-    font-size: 0.6rem;
-    color: #FFB6C1;
-    margin-top: 4px;
-  }
-
-  /* 오른쪽 열의 큰 하트 아이콘 */
-  .heart-icon {
-    font-size: 1.8rem;
-    color: #FFFFFF; /* 핑크 배경 위 흰색 하트 */
-    text-shadow: 0px 1px 2px rgba(255, 105, 180, 0.5);
-  }
-
-  /* 기호 스타일 */
-  .symbol {
-    font-size: 1.8rem;
-    font-style: italic;
-    color: #A0A0A0;
+  .invisible-btn:active {
+    background: rgba(255, 255, 255, 0.4);
   }
 </style>
 </head>
 <body>
 
-<div class="calculator-body">
-  <div class="display-area"></div>
+<div class="calculator-frame">
+  <input type="text" id="display" placeholder="0" readonly>
 
-  <div class="button-grid">
-    <button class="key key-white">
-        <span class="num">1</span>
-        <span class="mini-hearts">♥♥♥</span>
-    </button>
-    <button class="key key-white">
-        <span class="num">2</span>
-        <span class="sub">ABC</span>
-    </button>
-    <button class="key key-white">
-        <span class="num">3</span>
-        <span class="sub">DEF</span>
-    </button>
-    <button class="key key-pink">
-        <span class="heart-icon">♥</span>
-    </button>
+  <div class="keypad-container">
+    <div class="button-grid">
+      <button class="invisible-btn" onclick="add('1')"></button>
+      <button class="invisible-btn" onclick="add('2')"></button>
+      <button class="invisible-btn" onclick="add('3')"></button>
+      <button class="invisible-btn" onclick="cls()"></button>
 
-    <button class="key key-white">
-        <span class="num">4</span>
-        <span class="sub">GHI</span>
-    </button>
-    <button class="key key-white">
-        <span class="num">5</span>
-        <span class="sub">JKL</span>
-    </button>
-    <button class="key key-white">
-        <span class="num">6</span>
-        <span class="sub">MNO</span>
-    </button>
-    <button class="key key-pink">
-        <span class="heart-icon">♥</span>
-    </button>
+      <button class="invisible-btn" onclick="add('4')"></button>
+      <button class="invisible-btn" onclick="add('5')"></button>
+      <button class="invisible-btn" onclick="add('6')"></button>
+      <button class="invisible-btn" onclick="cls()"></button>
 
-    <button class="key key-white">
-        <span class="num">7</span>
-        <span class="sub">PQRS</span>
-    </button>
-    <button class="key key-white">
-        <span class="num">8</span>
-        <span class="sub">TUV</span>
-    </button>
-    <button class="key key-white">
-        <span class="num">9</span>
-        <span class="sub">WXYZ</span>
-    </button>
-    <button class="key key-pink">
-        <span class="heart-icon">♥</span>
-    </button>
+      <button class="invisible-btn" onclick="add('7')"></button>
+      <button class="invisible-btn" onclick="add('8')"></button>
+      <button class="invisible-btn" onclick="add('9')"></button>
+      <button class="invisible-btn" onclick="cls()"></button>
 
-    <button class="key key-white">
-        <span class="symbol">*</span>
-    </button>
-    <button class="key key-white">
-        <span class="num">0</span>
-    </button>
-    <button class="key key-white">
-        <span class="symbol">#</span>
-    </button>
-    <button class="key key-pink">
-        <span class="heart-icon">♥</span>
-    </button>
+      <button class="invisible-btn" onclick="add('*')"></button>
+      <button class="invisible-btn" onclick="add('0')"></button>
+      <button class="invisible-btn" onclick="add('#')"></button>
+      <button class="invisible-btn" onclick="cls()"></button>
+    </div>
   </div>
 </div>
+
+<script>
+  let val = "";
+  const d = document.getElementById('display');
+  
+  function add(n) {
+    if(val.length < 12) {
+      val += n;
+      d.value = val;
+    }
+  }
+  
+  function cls() {
+    val = "";
+    d.value = "";
+  }
+</script>
 
 </body>
 </html>
