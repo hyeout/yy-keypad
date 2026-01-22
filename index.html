@@ -4,64 +4,98 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
-  /* 1. 배경 및 폰트 설정 */
+  :root {
+    --bg-color: #fffafa; /* 아주 연한 핑크 화이트 */
+    --frame-color: #fff0f3; /* 본체 색상 */
+    --display-color: #ffffff;
+    --accent-pink: #ffb1cc;
+    --soft-shadow: rgba(255, 182, 193, 0.2);
+  }
+
   body {
     margin: 0;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-color: transparent; /* 노션 배경색에 맞춤 */
-    font-family: 'Segoe UI', sans-serif;
+    background-color: transparent;
+    font-family: 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
   }
 
-  /* 2. 계산기 본체 연출 (연한 핑크/화이트) */
-  .calculator-frame {
-    background-color: #fff9fb; /* 아주 연한 핑크 화이트 */
-    padding: 30px 20px;
-    border-radius: 40px;
-    box-shadow: 0 20px 50px rgba(255, 192, 203, 0.3);
-    border: 1px solid #ffeef2;
+  /* 1. 계산기 전체 몸체: 은은한 3D 입체감 부여 */
+  .calculator-body {
+    background-color: var(--frame-color);
+    padding: 35px 25px;
+    border-radius: 50px;
+    box-shadow: 
+      15px 15px 30px rgba(0, 0, 0, 0.03), 
+      -10px -10px 20px rgba(255, 255, 255, 0.8),
+      inset 0px 0px 2px rgba(255, 255, 255, 1);
+    border: 1px solid #fceef2;
     display: flex;
     flex-direction: column;
     align-items: center;
   }
 
-  /* 3. 상단 디스플레이 (점 없애고 숫자 나오게!) */
-  #display {
-    width: 260px;
-    height: 60px;
-    background-color: #ffffff;
-    border-radius: 15px;
-    margin-bottom: 25px;
-    border: none;
-    text-align: right;
-    padding: 0 20px;
-    font-size: 1.8rem;
-    color: #ffb1cc;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.02);
-    outline: none;
+  /* 2. 입력창: 점점점(dots)을 없애고 깊이감을 준 디자인 */
+  .display-well {
+    width: 280px;
+    height: 75px;
+    background-color: var(--display-color);
+    border-radius: 20px;
+    margin-bottom: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 25px;
+    box-shadow: 
+      inset 3px 3px 8px rgba(0, 0, 0, 0.04),
+      inset -2px -2px 5px rgba(255, 255, 255, 0.5);
     box-sizing: border-box;
   }
 
-  /* 4. 사용자님이 주신 이미지 배경 처리 */
-  .keypad-container {
-    position: relative;
-    width: 280px;  /* 이미지 비율에 맞춰 조정 */
-    height: 280px;
-    background-image: url('./keypad.png'); /* 반드시 파일명이 일치해야 함 */
-    background-size: contain;
-    background-repeat: no-repeat;
-    background-position: center;
+  #display-text {
+    font-size: 2rem;
+    color: var(--accent-pink);
+    font-weight: 300;
+    letter-spacing: 1px;
+    overflow: hidden;
   }
 
-  /* 5. 이미지 위의 투명 버튼 그리드 */
+  /* 3. 키패드 영역: 이미지가 본체 안으로 쏙 파여 들어간 효과 (중요!) */
+  .keypad-well {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    background-color: #ffffff;
+    border-radius: 25px;
+    padding: 5px;
+    /* 안쪽 그림자를 주어 이미지가 '박혀 있는' 느낌 연출 */
+    box-shadow: 
+      inset 4px 4px 10px rgba(0, 0, 0, 0.05),
+      inset -4px -4px 10px rgba(255, 255, 255, 0.8);
+    overflow: hidden;
+  }
+
+  .keypad-image {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background-image: url('./keypad.png'); /* 깃허브의 이미지 파일명과 일치시켜주세요 */
+    background-size: cover;
+    background-position: center;
+    pointer-events: none;
+  }
+
+  /* 4. 투명 버튼 그리드 */
   .button-grid {
+    position: relative;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     grid-template-rows: repeat(4, 1fr);
     width: 100%;
     height: 100%;
+    z-index: 2;
   }
 
   .invisible-btn {
@@ -69,23 +103,27 @@
     border: none;
     cursor: pointer;
     outline: none;
-    /* 클릭 시 아주 살짝만 반응 */
     -webkit-tap-highlight-color: transparent;
-    transition: background 0.2s;
+    transition: background 0.2s ease;
+  }
+
+  /* 클릭 시 버튼 모양에 맞춰 살짝 반짝임 */
+  .invisible-btn:active {
+    background: rgba(255, 255, 255, 0.3);
     border-radius: 15px;
   }
 
-  .invisible-btn:active {
-    background: rgba(255, 255, 255, 0.4);
-  }
 </style>
 </head>
 <body>
 
-<div class="calculator-frame">
-  <input type="text" id="display" placeholder="0" readonly>
+<div class="calculator-body">
+  <div class="display-well">
+    <div id="display-text"></div>
+  </div>
 
-  <div class="keypad-container">
+  <div class="keypad-well">
+    <div class="keypad-image"></div>
     <div class="button-grid">
       <button class="invisible-btn" onclick="add('1')"></button>
       <button class="invisible-btn" onclick="add('2')"></button>
@@ -111,19 +149,19 @@
 </div>
 
 <script>
-  let val = "";
-  const d = document.getElementById('display');
-  
-  function add(n) {
-    if(val.length < 12) {
-      val += n;
-      d.value = val;
+  let currentVal = "";
+  const displayElement = document.getElementById('display-text');
+
+  function add(char) {
+    if (currentVal.length < 12) {
+      currentVal += char;
+      displayElement.innerText = currentVal;
     }
   }
-  
+
   function cls() {
-    val = "";
-    d.value = "";
+    currentVal = "";
+    displayElement.innerText = "";
   }
 </script>
 
